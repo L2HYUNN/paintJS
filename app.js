@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d");
 const colors = document.getElementsByClassName("jsColor");
 const range = document.getElementById("jsRange");
 const mode = document.getElementById("jsMode");
+const save = document.getElementById("jsSave");
 
 const INITIAL_COLOR = "#2c2c2c";
 const CANVAS_WIDTH = canvas.offsetWidth;
@@ -20,6 +21,9 @@ canvas.height = CANVAS_HEIGHT;
 // ＜canvas id="jsCanvas" width="700" height="700"＞
 // 이런 식으로 html 내부에 width와 height를 지정하면 따로 element에 값을 부여하지 않아도 정상적으로 그림이 그려지게 됩니다.
 
+ctx.fillStyle = "white";
+ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
 ctx.strokeStyle = INITIAL_COLOR;
 ctx.fillStyle = INITIAL_COLOR;
 ctx.lineWidth = 2.5;
@@ -29,6 +33,9 @@ let filing = false;
 
 function startPainting() {
     painting = true;
+    if(filing) {
+        painting = false;
+    }
 }
 
 function stopPainting() {
@@ -84,12 +91,25 @@ function handleCanvasClick() {
     }
 }
 
+function handleCM(e) {
+    e.preventDefault();
+}
+
+function handleSaveClick(e) {   
+    const image = canvas.toDataURL();
+    const link = document.createElement("a");
+    link.href = image
+    link.download = "paintJS[EXPORT]";
+    link.click();
+}
+
 if(canvas){
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mousedown", startPainting);
     canvas.addEventListener("mouseup", stopPainting);
     canvas.addEventListener("mouseenter", onMouseEnter);
     canvas.addEventListener("click", handleCanvasClick);
+    canvas.addEventListener("contextmenu", handleCM);
     // canvas.addEventListener("mouseleave", stopPainting);
 }
 
@@ -105,4 +125,8 @@ if(range) {
 
 if(mode) {
     mode.addEventListener("click", handleModeClick);
+}
+
+if(save) {
+    save.addEventListener("click", handleSaveClick);
 }
