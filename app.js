@@ -1,8 +1,15 @@
 const canvas = document.getElementById("jsCanvas");
 const ctx = canvas.getContext("2d");
+const colors = document.getElementsByClassName("jsColor");
+const range = document.getElementById("jsRange");
+const mode = document.getElementById("jsMode");
 
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+const INITIAL_COLOR = "#2c2c2c";
+const CANVAS_WIDTH = canvas.offsetWidth;
+const CANVAS_HEIGHT = canvas.offsetHeight; 
+
+canvas.width = CANVAS_WIDTH;
+canvas.height = CANVAS_HEIGHT;
 // pixel modifier size need 
 // CanvasRenderingContext2D in MDN
 
@@ -13,10 +20,12 @@ canvas.height = canvas.offsetHeight;
 // ＜canvas id="jsCanvas" width="700" height="700"＞
 // 이런 식으로 html 내부에 width와 height를 지정하면 따로 element에 값을 부여하지 않아도 정상적으로 그림이 그려지게 됩니다.
 
-ctx.strokeStyle = "#2c2c2c";
+ctx.strokeStyle = INITIAL_COLOR;
+ctx.fillStyle = INITIAL_COLOR;
 ctx.lineWidth = 2.5;
 
 let painting = false;
+let filing = false;
 
 function startPainting() {
     painting = true;
@@ -47,12 +56,53 @@ function onMouseEnter(event){
     y = event.offsetY;
     
     ctx.moveTo(x, y);
+}
+
+function handleColorClick(e) {
+    const color = e.target.style.backgroundColor;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+}
+function handleRangeChange(e) {
+    const size = e.target.value;
+    ctx.lineWidth = size;
+}
+function handleModeClick(e) {
+    if(filing === true){
+        filing = false;
+        mode.innerText = "Fill"
+    } else {
+        filing = true;
+        mode.innerText = "Paint"
+        
     }
+}
+
+function handleCanvasClick() {
+    if(filing) {
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
+}
 
 if(canvas){
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mousedown", startPainting);
     canvas.addEventListener("mouseup", stopPainting);
     canvas.addEventListener("mouseenter", onMouseEnter);
+    canvas.addEventListener("click", handleCanvasClick);
     // canvas.addEventListener("mouseleave", stopPainting);
+}
+
+if(colors) {
+    Array.from(colors).forEach(color => 
+        color.addEventListener("click", handleColorClick)
+    );
+}
+
+if(range) {
+    range.addEventListener("input", handleRangeChange);
+}
+
+if(mode) {
+    mode.addEventListener("click", handleModeClick);
 }
